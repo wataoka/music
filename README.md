@@ -11,8 +11,14 @@
 
 ### 先行事例
 ・[RNN+LSTMで自動作曲して見た](https://qiita.com/komakomako/items/9ba38fc38f098c0e8b9b)
-#### 要約
- RNN+LSTMをChainerで作成し,midiファイルを時系列データとして学習させた[結果](https://s3-ap-northeast-1.amazonaws.com/komahirokazu-share/rnnlstm.mp3)こうなった.
+(要約)RNN+LSTMをChainerで作成し,midiファイルを時系列データとして学習させた[結果](https://s3-ap-northeast-1.amazonaws.com/komahirokazu-share/rnnlstm.mp3)こうなった.
+
+・[ニューラルネットワークで作曲をする! Magentaを動かす](https://qiita.com/marshi/items/0f6fbbe39c4381457b0a)
+(要約)MegentaというGoogleのライブラリを用いて作曲を行った. MegentaのモデルはLSTM. このモデルにmidiファイルを流して生成したところ[結果](https://soundcloud.com/ig4osq8tqokz/magenta1)こうなった。
+
+### 雑感
+- 完成したものが歌を歌うような曲ではない.
+- 学習時間が長いらしい(1曲だけでも1分程度)
 
 
 ## 作詞
