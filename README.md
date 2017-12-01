@@ -10,7 +10,9 @@
 3. 出力
 
 ### 先行事例
-[RNN+LSTMで自動作曲して見た](https://qiita.com/komakomako/items/9ba38fc38f098c0e8b9b)
+・[RNN+LSTMで自動作曲して見た](https://qiita.com/komakomako/items/9ba38fc38f098c0e8b9b)
+#### 要約
+ RNN+LSTMをChainerで作成し,midiファイルを時系列データとして学習させた[結果](https://s3-ap-northeast-1.amazonaws.com/komahirokazu-share/rnnlstm.mp3)こうなった.
 
 
 ## 作詞
