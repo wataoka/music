@@ -24,6 +24,7 @@ import sys
 ```
 
 |関数名|説明|
+|:----|:---|
 |print_function|python2系ではprintは関数扱いではなくコマンドのようなものだったので, `print output`というふうに括弧なしに書いていた. これを関数扱いするためにprint_functionがある. つまりpypthon3系を使っているものには不必要.|
 |Sequential|省略|
 |Dense, Activation|省略|
