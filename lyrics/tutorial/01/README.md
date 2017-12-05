@@ -266,6 +266,7 @@ print(sentences[3])
 print("---next_chars3---")
 print(next_chars[3])
 
+'''
 >>>
 ---sentences0---
 preface
@@ -293,6 +294,7 @@ t
 supposing that truth is a woman--what t
 ---next_chars3---
 h
+'''
 
 ```
 となる. 全文と見比べてみればわかるとおり, 文章とその次にくる文字がそれぞれsentencesとnext_charsにきちんと入っていることがわかる.
