@@ -29,10 +29,8 @@ import sys
 |Sequential|省略|
 |Dense, Activation|省略|
 |LSTM|省略|
-|RMSprop|重みを更新するときの関数.  
-[参考](https://qiita.com/tokkuman/items/1944c00415d129ca0ee9)|
-|get_file|指定したURLからファイルをダウンロードし, そのファイルへのpathを返す.  
-[参考](https://keras.io/ja/utils/data_utils/)|
+|RMSprop|重みを更新するときの関数.[参考](https://qiita.com/tokkuman/items/1944c00415d129ca0ee9)  |
+|get_file|指定したURLからファイルをダウンロードし, そのファイルへのpathを返す.[参考](https://keras.io/ja/utils/data_utils/)  |
 |numpy|省略|
 |random|省略|
 |sys|省略|
