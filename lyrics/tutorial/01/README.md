@@ -10,6 +10,7 @@
 
 ## 解説
 ### import
+
 '''lstm_text\generation.py
 from __future__ import print_function
 from keras.models import Sequential
@@ -21,3 +22,4 @@ import numpy as np
 import random
 improt sys
 '''
+
