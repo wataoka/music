@@ -52,9 +52,8 @@ indices_char = dict((i, c) for i, c in enumerate(chars))
 textの中をちょっとだけ見てみると...
 ```python
 print(text[0: 10000])
->>>
 '''
-preface
+>>>preface
 
 
 supposing that truth is a woman--what then? is there not ground
