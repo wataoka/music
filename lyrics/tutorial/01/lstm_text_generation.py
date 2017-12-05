@@ -20,6 +20,6 @@ indices_char = dict((i, c) for i, c in enumerate(chars))
 print()
 print("-------------------------")
 print()
-print(path)
+print(text[0: 10000])
 
 
