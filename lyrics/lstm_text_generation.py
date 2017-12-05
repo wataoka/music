@@ -13,13 +13,8 @@ path = get_file('nietzsche.txt', origin='https://s3.amazonaws.com/text-datasets/
 text = open(path).read().lower()
 
 chars = sorted(list(set(text)))
-print('total chars:', len(chars))
-char_indices = dict((c, i) for i, c in enumerate(chars))
-indices_char = dict((i, c) for i, c in enumerate(chars))
 
 print()
 print("-------------------------")
 print()
-print(path)
-
-
+print(chars[0])
