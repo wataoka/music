@@ -52,8 +52,7 @@ indices_char = dict((i, c) for i, c in enumerate(chars))
 textの中をちょっとだけ見てみると...
 ```python
 print(text[0: 10000])
->>>
-"preface
+>>>"preface
 
 
 supposing that truth is a woman--what then? is there not ground
@@ -232,3 +231,68 @@ print(char_indices)
 print(indices_char)
 >>>{0: '\n', 1: ' ', 2: '!', 3: '"', 4: "'", 5: '(', 6: ')', 7: ',', 8: '-', 9: '.', 10: '0', 11: '1', 12: '2', 13: '3', 14: '4', 15: '5', 16: '6', 17: '7', 18: '8', 19: '9', 20: ':', 21: ';', 22: '=', 23: '?', 24: '[', 25: ']', 26: '_', 27: 'a', 28: 'b', 29: 'c', 30: 'd', 31: 'e', 32: 'f', 33: 'g', 34: 'h', 35: 'i', 36: 'j', 37: 'k', 38: 'l', 39: 'm', 40: 'n', 41: 'o', 42: 'p', 43: 'q', 44: 'r', 45: 's', 46: 't', 47: 'u', 48: 'v', 49: 'w', 50: 'x', 51: 'y', 52: 'z', 53: 'ä', 54: 'æ', 55: 'é', 56: 'ë'}
 ```
+
+### ■前処理
+```python
+maxlen = 40
+step = 3
+sentences = []
+next_chars = []
+for i in range(0, len(text) maxlen, step):
+    sentences.append(text[i: i + maxlen])
+    next_chars.append(text[i + maxlen])
+print('nb sequences:', len(sentences))
+```
+
+まず1字目〜40字目をsentencesに追加し, 次に4字目〜44字目までをsentencesに追加する. このように3字飛ばしづつの文章をsentenceに加え, そのつぎに来る文字をnext_charsに追加する.  
+
+実際に確かめてみると...
+
+```python
+print("---sentences0---")
+print(sentences[0])
+print("---next_chars0---")
+print(next_chars[0])
+print("---sentences1---")
+print(sentences[1])
+print("---next_chars1---")
+print(next_chars[1])
+print("---sentences2---")
+print(sentences[2])
+print("---next_chars2---")
+print(next_chars[2])
+print("---sentences3---")
+print(sentences[3])
+print("---next_chars3---")
+print(next_chars[3])
+
+>>>
+---sentences0---
+preface
+
+
+supposing that truth is a woma
+---next_chars0---
+n
+---sentences1---
+face
+
+
+supposing that truth is a woman--
+---next_chars1---
+w
+---sentences2---
+e
+
+
+supposing that truth is a woman--wha
+---next_chars2---
+t
+---sentences3---
+
+supposing that truth is a woman--what t
+---next_chars3---
+h
+
+```
+となる. 全文と見比べてみればわかるとおり, 文章とその次にくる文字がそれぞれsentencesとnext_charsにきちんと入っていることがわかる.
