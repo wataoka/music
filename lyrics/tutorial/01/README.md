@@ -50,6 +50,7 @@ indices_char = dict((i, c) for i, c in enumerate(chars))
 
 次に保存したnietzsche.txtの中身をtextに突っ込む.  
 textの中をちょっとだけ見てみると...
+
 ```python
 print(text[0: 10000])
 
