@@ -10,8 +10,7 @@
 
 ## 解説
 ### import
-
-'''lstm_text\generation.py
+```lstm_text\generation.py
 from __future__ import print_function
 from keras.models import Sequential
 from keras.layers import Dense, Activation
@@ -21,5 +20,4 @@ from keras.utils.data_utils import get_file
 import numpy as np
 import random
 improt sys
-'''
-
+```
