@@ -24,24 +24,10 @@ next_chars = []
 for i in range(0, len(text) - maxlen, step):
     sentences.append(text[i: i + maxlen])
     next_chars.append(text[i + maxlen])
+print('nb sequences:', len(sentences))
+
+print('Vectorization...')
 
 
 
-
-print("---sentences0---")
-print(sentences[0])
-print("---next_chars0---")
-print(next_chars[0])
-print("---sentences1---")
-print(sentences[1])
-print("---next_chars1---")
-print(next_chars[1])
-print("---sentences2---")
-print(sentences[2])
-print("---next_chars2---")
-print(next_chars[2])
-print("---sentences3---")
-print(sentences[3])
-print("---next_chars3---")
-print(next_chars[3])
 
