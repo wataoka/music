@@ -24,24 +24,15 @@ import sys
 ```
 
 |関数名|説明|
-|print_function|
-python2系ではprintは関数扱いではなくコマンドのようなものだったので, `print output`というふうに括弧なしに書いていた. これを関数扱いするためにprint_functionがある. つまりpypthon3系を使っているものには不必要.|
-|Sequential|
-省略|
-|Dense, Activation|
-省略|
-|LSTM|
-省略|
-|RMSprop|
-重みを更新するときの関数.  
+|print_function|python2系ではprintは関数扱いではなくコマンドのようなものだったので, `print output`というふうに括弧なしに書いていた. これを関数扱いするためにprint_functionがある. つまりpypthon3系を使っているものには不必要.|
+|Sequential|省略|
+|Dense, Activation|省略|
+|LSTM|省略|
+|RMSprop|重みを更新するときの関数.  
 [参考](https://qiita.com/tokkuman/items/1944c00415d129ca0ee9)|
-|get_file|
-指定したURLからファイルをダウンロードし, そのファイルへのpathを返す.  
+|get_file|指定したURLからファイルをダウンロードし, そのファイルへのpathを返す.  
 [参考](https://keras.io/ja/utils/data_utils/)|
-|numpy|
-省略|
-|random|
-省略|
-|sys|
-省略|
+|numpy|省略|
+|random|省略|
+|sys|省略|
 
