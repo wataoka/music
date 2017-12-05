@@ -52,7 +52,9 @@ indices_char = dict((i, c) for i, c in enumerate(chars))
 textの中をちょっとだけ見てみると...
 ```python
 print(text[0: 10000])
->>>"preface
+>>>
+'''
+preface
 
 
 supposing that truth is a woman--what then? is there not ground
@@ -212,6 +214,7 @@ inclined to maintain that the falsest opinions (to which the synthetic
 judgments a priori belong), are the most indispensable to us, that
 without a recognition of logical fictions, without a comparison of
 reality with the
+'''
 ```
 という風に, ニーチェの文章がちゃんと出てきた.  
 
