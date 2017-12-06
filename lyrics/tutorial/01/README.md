@@ -346,7 +346,7 @@ print(char_indices['!'])
 きちんと`!`に対応する場所を示すインデックスである`2`を返してくれている.  
 
 
-### モデルの設計
+### ■モデルの設計
 ```python
 model = Sequential()
 model.add(LSTM(128, input_shape=(maxlen, len(chars))))
@@ -361,7 +361,7 @@ model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
 
 
-### sample関数の定義
+### ■sample関数の定義
 ```python
 def sample(preds, temperature=1.0):
     preds = np.asarray(preds).astype('float64')
@@ -371,7 +371,8 @@ def sample(preds, temperature=1.0):
     probas = np.random.multinomial(1, preds, 1)
     return np.argmax(probas)
 ```
-入力された確率のリストを正規化し, 最大値のインデックスを返す関数. 実際に動かしてみると,
+入力された確率のリストを正規化し, 最大値のインデックスを返す関数.  
+実際に動かしてみると,
 
 ```python
 preds = [  6.05958747e-04   1.46672153e-03   7.70759361e-05   3.32636992e-03
@@ -397,5 +398,113 @@ print(ans)
 >>>27
 '''
 ```
-リスト内の27番目にある`1.78474337e-01`ではないかとsample関数は予測したようだ.
+リスト内の27番目にある`1.78474337e-01`が最大化されたらしい.  
 
+
+
+### ■学習
+
+
+```python
+for iteration in renge(1, 60):
+    print()
+    print('-' * 50)
+    print('Iteration', iteration)
+    model.fit(x, y,
+              batch_size=128,
+              epochs=1
+    )
+    
+    start_index = random.randint(0, len(text) - maxlen - 1)
+    
+    for diversity in [0.2, 0.5, 1.0, 1.2]:
+       print()
+       print('----- diversity:', diversity)
+       generated = ''
+       sentence = text[start_index: start_index + maxlen]
+       generated += sentence
+       print('----- Generating with seed: "' + sentence + '"')
+       sys.stdout.write(generated)
+       
+       for i in range(400):
+           x_pred = np.zeros((1, maxlen, len(chars)))
+           for t, char in enumerate(sentence):
+               x_pred[0, t, char_indices[char]] = 1
+           
+           preds = model.predict(x_pred, verbose=0)[0]
+           next_index = sample(preds, diversity)
+           next_char = indices_char[next_index]
+           
+           generated += next_char
+           sentence = sentence[1:] + next_char
+           
+           sys.stdout.write(next_char)
+           sys.stdout.flush()
+       print()
+```
+
+#### 訓練
+訓練は`model.fit`の一行で行われている.  
+for文で定義されている通り, 60回学習する.  
+
+#### テスト
+訓練が1度終われば, すぐにテストを行っている.  
+テストの方法は,  
+1. 適当な40字の文章を本文から取ってくる.
+2. その40字を`sentence`代入する.
+3. `sentence`から予想される次の1文字を`next_char`に代入する.
+4. `next_char`を`sentence`に加える.
+5. 逐一, 出来栄えを出力する.
+6. これを400字作るまでくりかえす.
+
+## 結果
+60回学習するのはめんどくさかったので6回学習させた結果.
+
+### 1回目
+はじめの40字
+>repulsive superstition--he dealt with
+a
+生成した続きの400字
+>nd the sensental sension of the still and the sention of the still and the more the still and the still the still the stringer which the still the stand of the man from the men the sense of the will the sensent in the still the still man the sense of the the subligent the still the still the still the sense of the still the sense of the more the more and the sensental the still the still the still
+
+### 2回目
+はじめの40字
+>e would it give that
+>it would not contin
+
+生成した続きの400字
+>unal proposition of the more of the concertal strength of the stand it is the most strive of the understand the strange of the expression of every man estime and in the strength and the man in the fact of the strength of the strange of the master of the more of the master of the strange and the more concerning and and and only the most stand of the strange of the strength of the staniness of the p
+
+### 3回目
+はじめの40字
+>ork and invention of
+>france; the europea
+
+生成した続きの400字
+>n in the most in the conscience of the state and in the respection of a sufficient of the sense of the self in the substation of the subjection of the self interpariest of the same the same a sufficient of all philosophy in the same the sense of the most conscience of a probably the same the same the same a sufficient of the sense of the same the consciously and in the strength in the most conscie
+
+### 4回目
+はじめの40字
+>pe of new
+>germanism is covetous of quite
+
+生成した続きの400字
+>the sense of the most and soul the most and and it is a man is the sentiment of the possible and the most reason and the sense it is the most and and of the sense and the most and the sense of the sense of the sublimation of the serve and the sense of the sertion and the most and the world of the most and intellectual and and as the sert of the sense of the sense of the strength of the servess an
+
+### 5回目
+はじめの40字
+>ems to me that in this case schopenhauer
+
+生成した続きの400字
+>to the state of the strength of the strends of the stronger of the expressed to the stronger in the strended to the sinceration of the same as the sincess of the problem of the strongess of the state of the strongess of the stronger and all the soul of the strongess and problem of the stronger to the sense of the strongess and the stronger of the strongess and the stronger and the same shard of t
+
+### 6回目
+はじめの40字
+>ment (a kind of rococo of taste in every
+
+生成した続きの400字
+> strong the probably the morality and a surpose and the concealis and a propers its spirits of the powerful to the self-desire and a proper the subtlety and perhaps the state of the soul of the struggle of the concealing the most conscience of the soul of the decises that the procession of the spirits, and a something and such a still a proper the more and a still as the spirits and a concealistic
+
+
+## 考察
+文章をしっかり書けているわけではないが単語を覚えられたのは見て取れる.
