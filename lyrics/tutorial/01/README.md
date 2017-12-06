@@ -302,3 +302,49 @@ h
 
 ```
 となる. 全文と見比べてみればわかるとおり, 文章とその次にくる文字がそれぞれsentencesとnext_charsにきちんと入っていることがわかる.
+
+### ■教師データの準備
+
+#### 0を敷き詰める
+```python
+x = np.zeros((len(sentences), maxlen, len(chars)), dtype=np.bool)
+y = np.zeros((len(sentences), len(chars)), dtype=np.bool)
+```
+先ほど作った大量の文章をone-hotエンコーディングするために, まずは0を敷き詰める.(正確にはFalseを敷き詰めいてる)  
+
+大きさがデータの形がわかりにくかったのでnumpyに調べてもらった.
+```python
+print(np.shape(x))
+print(np.shape(y))
+'''
+>>>(200285, 40, 57)
+(200285, 57)
+
+'''
+```
+200285が大量に作った文章の数  
+57が記号の数で, あとで一文字一文字対応する場所を1に変更する.  
+そして, xに関しては40個の文字列で一セットなので(200284, 4-, 57)となっている.  
+
+
+#### 対応する場所を1にする
+```python
+for i, sentence in enumerate(sentences):
+    for t, char in enumerate(sentence):
+        x[i, t, char_indices[char]] = 1
+    y[i, char_indices[next_chars[i]]] = 1
+```
+ここでさきほど作った`char_indices`ディクショナリが大活躍. このディクショナリのkeyに文字を与えるとそれに対応する場所を示すインデックスを返してくれる.これを利用して, 先ほどの57のところに`char_indices[char]`と`char_indices[next_char[i]]`をぶち込んでやれば全てがうまく行く.  
+
+一応`char_indices`の機能を確認しておく.
+```python
+print(chars)
+print(char_indices['!'])
+'''
+>>>['\n', ' ', '!', '"', "'", '(', ')', ',', '-', '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '=', '?', '[', ']', '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'æ', 'é', 'ë']
+
+2
+
+'''
+```
+きちんと`!`に対応する場所を示すインデックスである`2`を返してくれている.
