@@ -130,7 +130,6 @@ chapter i. prejudices of philosophers
 
 1. the will to truth, which is to tempt us to many a hazardous
 enterprise, the famous truthfulness of which all philosophers have
-hitherto spoken with respect, what questions has this will to truth not
 laid before us! what strange, perplexing, questionable questions! it is
 already a long story; yet it seems as if it were hardly commenced. is
 it any wonder if we at last grow distrustful, lose patience, and turn
@@ -319,7 +318,6 @@ print(np.shape(y))
 '''
 >>>(200285, 40, 57)
 (200285, 57)
-
 '''
 ```
 200285が大量に作った文章の数  
@@ -342,9 +340,62 @@ print(chars)
 print(char_indices['!'])
 '''
 >>>['\n', ' ', '!', '"', "'", '(', ')', ',', '-', '.', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '=', '?', '[', ']', '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'æ', 'é', 'ë']
-
 2
-
 '''
 ```
-きちんと`!`に対応する場所を示すインデックスである`2`を返してくれている.
+きちんと`!`に対応する場所を示すインデックスである`2`を返してくれている.  
+
+
+### モデルの設計
+```python
+model = Sequential()
+model.add(LSTM(128, input_shape=(maxlen, len(chars))))
+model.add(Dense(len(chars)))
+model.add(Activation('softmax'))
+
+optimizer = RMSprop(lr=0.01)
+model.compile(loss='categorical_crossentropy', optimizer=optimizer)
+```
+こんな感じ.
+![モデル](https://ai-coordinator.jp/wp-content/uploads/2017/08/LSTM_model.png)  
+
+
+
+### sample関数の定義
+```python
+def sample(preds, temperature=1.0):
+    preds = np.asarray(preds).astype('float64')
+    preds = np.log(preds) / temperature
+    exp_preds = np.exp(preds)
+    preds = exp_preds / np.sum(exp_preds)
+    probas = np.random.multinomial(1, preds, 1)
+    return np.argmax(probas)
+```
+入力された確率のリストを正規化し, 最大値のインデックスを返す関数. 実際に動かしてみると,
+
+```python
+preds = [  6.05958747e-04   1.46672153e-03   7.70759361e-05   3.32636992e-03
+   4.41987904e-05   6.14247168e-04   3.37334495e-05   4.34828107e-04
+   5.08925878e-04   2.06383556e-04   9.33959655e-07   4.21795667e-05
+   2.38951998e-05   7.14040107e-06   2.37641734e-06   2.36847359e-06
+   7.78792401e-06   1.32757123e-06   2.81304779e-06   1.19497363e-05
+   1.57066213e-04   1.23525417e-04   8.68624265e-05   7.96350214e-05
+   3.08299741e-06   7.77315745e-06   1.17005166e-05   1.78474337e-01
+   2.85854023e-02   2.75644697e-02   1.16788959e-02   1.75518319e-02
+   3.10252998e-02   6.06567273e-03   1.79951563e-02   6.03913851e-02
+   2.44643539e-04   1.43562758e-03   1.72499064e-02   3.17009166e-02
+   1.37064010e-02   1.83961838e-01   3.21779065e-02   3.37578967e-04
+   8.14340636e-03   3.24097723e-02   2.00572893e-01   2.68001724e-02
+   4.29536868e-03   5.60857765e-02   7.83014184e-06   3.58585967e-03
+   6.08548798e-05   2.36636133e-09   2.13360085e-09   2.09655981e-09
+   2.89875124e-09]
+
+ans = sample(preds)
+print(ans)
+
+'''
+>>>27
+'''
+```
+リスト内の27番目にある`1.78474337e-01`ではないかとsample関数は予測したようだ.
+
