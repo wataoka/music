@@ -177,15 +177,15 @@ from keras.models import Model
 | sys                | インタプリタで使用・管理している変数や, インタプリタの動作に深く関連する関数を定義しているモジュール |
 | numpy              | 省略                       |
 | Tokenizer          | テキストをベクトル化したり, テキストをシーケンス化したりするクラス |
-| pad_sequences      |                          |
-| to_categorical     |                          |
-| Dense              |                          |
-| Input              |                          |
-| GlobalMaxPooling1D |                          |
-| Conv1D             |                          |
-| MaxPooling1D       |                          |
-| Emvedding          |                          |
-| Model              |                          |
+| pad_sequences      | シーケンスのリストを二次元のリストにする.    |
+| to_categorical     | クラスベクトルをcategorical_crossentropyとともに用いるためのバイナルクラス行列に変換する |
+| Dense              | 全結合層                     |
+| Input              | 入力として受け付けるデータの次元を指定      |
+| GlobalMaxPooling1D | 特徴マップ全てに対してMaxPoolingを施す |
+| Conv1D             | 畳み込み層                    |
+| MaxPooling1D       | 最大値プーリング層                |
+| Embedding          | 正の整数を固定次元の密ベクトルに変換する     |
+| Model              | 省略                       |
 
 ■os.path.join  
 賢くパスを繋いでくれる関数.  
@@ -199,12 +199,12 @@ print(path)
 '''
 ```
 
-■Tokenizer
-- メソッド
-  - fit_on_texts(texts)：学習に使うテキストをいい感じにしてくれる. (内部で何をしているかよくわからなかった)
-  - texts_to_sequences(texts)：文章のリストをシーケンスに変換してくれる.
+- Tokenizer
+  - メソッド
+    - fit_on_texts(texts)：学習に使うテキストをいい感じにしてくれる. (内部で何をしているかよくわからなかった)
+    - texts_to_sequences(texts)：文章のリストをシーケンスに変換してくれる.
 
-- 実験
+  - 実験
 ```python
 from keras.preprocessing.text import Tokenizer
 
@@ -218,8 +218,47 @@ print(sequences)
 >>>[[4, 1, 5, 2], [6, 1, 3], [3, 1, 2]]
 '''
 ```
+という風にそれぞれの単語が対応する数字が割り振られてる. 見たところ頻出順に数字が割り振られている.  
 
+- pad_sequences
+  - 実験
+```python
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
 
+texts = ['this is a pen', 'he is koki', 'koki is pen']
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(texts)
+sequences = tokenizer.texts_to_sequences(texts)
+
+print(sequences)
+print(pad_sequences(sequences))
+
+'''
+>>>[[4, 1, 5, 2], [6, 1, 3], [3, 1, 2]]
+[[4 1 5 2]
+ [0 6 1 3]
+ [0 3 1 2]]
+
+'''
+```
+こんな感じ.
+
+### 定義
+```python
+BASE_DIR = ''
+GLOVE_DIR = os.path.join(BASE_DIR, 'globe.6B')
+TEXT_DATA_DIR = os.path.join(BASE_DIR, '20_newsgroup')
+MAX_SEQUENCE_LENGTH = 1000
+MAX_NUM_WORDS = 20000
+EMBEDDING_DIM = 100
+VALUDATION_SPLIT = 0.2
+```
+
+|名前|説明|
+|:--|:--|
+|BASE_DIR|ベースディレクトリを示すパス. ここで指定するディレクトリを基準としてデータセット等を置く. 何も指定しなければカレントディレクトリがベースとなる. |
+|GLOVE_DIR|gloveファイルを置くディレクトリを示すパス. gloveとは, スタンフォード大学のプロジェクト名で, Global Vectors for WordRepresentationのことで, word2vecの上位互換だと考えればいい. |
 
 ## 参考
 [絵で理解するWord2vec](https://qiita.com/Hironsan/items/11b388575a058dc8a46a)
