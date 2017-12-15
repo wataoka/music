@@ -193,6 +193,7 @@ from keras.models import Model
 ```python
 path = os.path.join('src', 'main.py')
 print(path)
+
 '''
 >>>src/main.py
 '''
@@ -212,6 +213,7 @@ tokenizer = Tokenizer()
 tokenizer.fit_on_texts(texts)
 sequences = tokenizer.texts_to_sequences(texts)
 print(sequences)
+
 '''
 >>>[[4, 1, 5, 2], [6, 1, 3], [3, 1, 2]]
 '''
