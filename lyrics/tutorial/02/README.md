@@ -174,9 +174,9 @@ from keras.models import Model
 | :--                | :--                      |
 | print_function     | python2.xとpython3.x間で互換性をもたせるもの   |
 | os                 | os依存の機能を使うためのモジュール       |
-| sys                |                          |
-| numpy              |                          |
-| Tokenizer          |                          |
+| sys                | インタプリタで使用・管理している変数や, インタプリタの動作に深く関連する関数を定義しているモジュール |
+| numpy              | 省略                       |
+| Tokenizer          | テキストをベクトル化したり, テキストをシーケンス化したりするクラス |
 | pad_sequences      |                          |
 | to_categorical     |                          |
 | Dense              |                          |
@@ -189,6 +189,7 @@ from keras.models import Model
 
 ■os.path.join  
 賢くパスを繋いでくれる関数.  
+(例)
 ```python
 path = os.path.join('src', 'main.py')
 print(path)
@@ -197,7 +198,24 @@ print(path)
 '''
 ```
 
+■Tokenizer
+-メソッド
+  -fit_on_texts(texts)：学習に使うテキストをいい感じにしてくれる. (内部で何をしているかよくわからなかった)
+  -texts_to_sequences(texts)：文章のリストをシーケンスに変換してくれる.
 
+-使用例
+```python
+from keras.preprocessing.text import Tokenizer
+
+texts = ['this is a pen', 'he is koki', 'koki is pen']
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(texts)
+sequences = tokenizer.texts_to_sequences(texts)
+print(sequences)
+'''
+>>>[[4, 1, 5, 2], [6, 1, 3], [3, 1, 2]]
+'''
+```
 
 
 
