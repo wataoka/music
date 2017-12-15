@@ -155,6 +155,51 @@ model.fit(x_train, y_train,
 validation_data=(x_val, y_val))
 ```
 
+## 解説
+### ■import
+```python
+from __future__ import print_function
+
+import os
+import sys
+import numpy as np
+from keras.preprocessing.text import Tokenizer
+from keras.preptocessing.sequence import pad_sequences
+from keras.utils import to_categorical
+from keras.layers import Dense, Input, GlobalMaxPooling1D
+from keras.layers import Conv1D, MaxPooling1D, Embedding
+from keras.models import Model
+```
+| 名前               | 説明                     |
+| :--                | :--                      |
+| print_function     | python2.xとpython3.x間で互換性をもたせるもの   |
+| os                 | os依存の機能を使うためのモジュール       |
+| sys                |                          |
+| numpy              |                          |
+| Tokenizer          |                          |
+| pad_sequences      |                          |
+| to_categorical     |                          |
+| Dense              |                          |
+| Input              |                          |
+| GlobalMaxPooling1D |                          |
+| Conv1D             |                          |
+| MaxPooling1D       |                          |
+| Emvedding          |                          |
+| Model              |                          |
+
+■os.path.join  
+賢くパスを繋いでくれる関数.  
+```python
+path = os.path.join('src', 'main.py')
+print(path)
+'''
+>>>src/main.py
+'''
+```
+
+
+
+
 
 ## 参考
 [絵で理解するWord2vec](https://qiita.com/Hironsan/items/11b388575a058dc8a46a)
