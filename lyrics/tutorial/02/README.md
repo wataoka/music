@@ -259,6 +259,11 @@ VALUDATION_SPLIT = 0.2
 |:--|:--|
 |BASE_DIR|ベースディレクトリを示すパス. ここで指定するディレクトリを基準としてデータセット等を置く. 何も指定しなければカレントディレクトリがベースとなる. |
 |GLOVE_DIR|gloveファイルを置くディレクトリを示すパス. gloveとは, スタンフォード大学のプロジェクト名で, Global Vectors for WordRepresentationのことで, word2vecの上位互換だと考えればいい. |
+|TEXT_DATA_DIR|テキストデータを置くディレクトリを示すパス|
+|MAX_SEQUENCE_LENGTH|記録するシーケンスの最大数 |
+|MAX_NUM_WORDS|記録する単語の最大数|
+|EMBEDDING_DIM||
+|VALUEDATION_SPLIT||
 
 ## 参考
 [絵で理解するWord2vec](https://qiita.com/Hironsan/items/11b388575a058dc8a46a)
