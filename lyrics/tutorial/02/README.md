@@ -199,11 +199,11 @@ print(path)
 ```
 
 ■Tokenizer
--メソッド
-  -fit_on_texts(texts)：学習に使うテキストをいい感じにしてくれる. (内部で何をしているかよくわからなかった)
-  -texts_to_sequences(texts)：文章のリストをシーケンスに変換してくれる.
+- メソッド
+  - fit_on_texts(texts)：学習に使うテキストをいい感じにしてくれる. (内部で何をしているかよくわからなかった)
+  - texts_to_sequences(texts)：文章のリストをシーケンスに変換してくれる.
 
--使用例
+- 実験
 ```python
 from keras.preprocessing.text import Tokenizer
 
