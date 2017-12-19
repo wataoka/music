@@ -279,6 +279,7 @@ VALUDATION_SPLIT = 0.2
 |MAX_NUM_WORDS|記録する単語の最大数|
 |EMBEDDING_DIM|gloveファイルの次元数 |
 |VALUEDATION_SPLIT|訓練データと教師データを分ける比率|
+  
 ※gloveファイルとテキストデータはファイルの容量が100MB以上でgithubに保存できなかったので, 下記を参照されたい.
 [glove](http://nlp.stanford.edu/projects/glove/)
 [text](http://www.cs.cmu.edu/afs/cs.cmu.edu/project/theo-20/www/data/news20.html)
