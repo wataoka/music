@@ -470,8 +470,11 @@ model.fit(x_train, y_train,
           batch_size=128,
           epochs=10,
           validation_data=(x_val, y_val))
-
 ```
+
+こんな感じ
+
+![モデル](./model.png)
 
 
 
