@@ -2,7 +2,7 @@
 ## 概要
 作詞チュートリアル03では, mecabについて学ぶ.
 
-## インスタトール
+## インストール
 ```command
 $ pip install mecab-python3
 ```
