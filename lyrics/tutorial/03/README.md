@@ -3,8 +3,24 @@
 作詞チュートリアル03では, mecabについて学ぶ.
 
 ## インストール
+### mecabのインストール
+```command
+$ brew install mecab
+```
+### mecab-ipadicのインストール
+```command
+$ brew install mecab-ipadic
+```
+### mecab-python3のインストール 
 ```command
 $ pip install mecab-python3
+```
+### mecab-ipadic-NEologdのインストール
+```command
+$ brew install git curl xz
+$ git clone --depth 1 git@github.com:neologd/mecab-ipadic-neologd.git
+$ cd mecab-ipadic-noelogd
+$ ./bin/install-mecab-ipadic-neologd -n
 ```
 でOK.
 
@@ -94,7 +110,17 @@ if __name__ == "__main__":
 ['私', '名前', '綿', '岡', '晃', '輝', '生まれ', '大阪', 'この世', '好き', 'もの', '数学']
 ```
 
+### ■その5 (mecab-ipadic-NEologdを使用)
+```python
+import sys
+import MeCab
+
+mecab = MeCab.Tagger("-Ochasen -d /usr/lib/mecab/dic/mecab-ipadic-neologd")
+print(mecab.parse("こんにちは、世界のみなさん。"))
+```
+
 ## 覚えておくべきこと
 - ただ単にかち書きするときは`MeCab.Tagger`のパラメータに`-Owakati`を指定する.
 - 形態素解析するときは`MeCab.Tagger`のパラメータに`-Ochasen`を指定する.
 - 形態素解析結果で得られたオブジェクトからsurfaceで単語, featureで解析結果が得られる.
+- MeCabに渡す文字列はきっちり
