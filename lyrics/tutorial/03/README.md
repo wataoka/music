@@ -44,7 +44,7 @@ print(mecab.parse("こんにちは、世界のみなさん。"))
 EOS
 ```
 
-### ■その3 (分ち書き→リスト化)
+### ■その3 (分かち書き→リスト化)
 ```python
 import MeCab
 import re
