@@ -1,18 +1,17 @@
-import sys
 import MeCab
+import re
 
+text = "私の名前はカイラです。今年もよろしくお願いします。"
 
-mecab = MeCab.Tagger("mecabrc")
+# 分かち書き
+mecab = MeCab.Tagger("-Owakati")
+result = mecab.parse(text)
 
-def ma_parse(sentence, filter="名詞"):
-    node = mecab.parseToNode(sentence)
-    while node:
-        if node.feature.startswith(filter):
-            yield node.surface
-        node = node.next
+# 単語リスト作成
+# 正規表現を用いてスペースで分けている
+ws = re.compile(" ")
+words = [word for word in ws.split(result)]
+if words[-1] == u'\n':
+    words = words[:-1]
 
-if __name__ == "__main__":
-    sentence = "私の名前は綿岡晃輝です。生まれは大阪。この世で最も好きなものは数学です。"
-    words = [word for word in ma_parse(sentence)]
-
-    print(words)
+print(words)
