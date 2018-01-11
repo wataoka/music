@@ -12,6 +12,7 @@ $ pip install mecab-python3
 　日本語を単語に分割し, それぞれの単語に品詞を付与することを形態素解析という. そしてMeCabは形態素解析エンジン.
 
 ## 色々使ってみよう
+### ■その1
 ```python
 import sys
 import MeCab
@@ -29,6 +30,7 @@ print(mecab.parse("こんにちは、世界のみなさん。"))
 EOS
 ```
 
+### ■その2
 ```python
 import sys
 import MeCab
