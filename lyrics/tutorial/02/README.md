@@ -267,7 +267,7 @@ TEXT_DATA_DIR = os.path.join(BASE_DIR, '20_newsgroup')
 MAX_SEQUENCE_LENGTH = 1000
 MAX_NUM_WORDS = 20000
 EMBEDDING_DIM = 100
-VALUDATION_SPLIT = 0.2
+VALIDATION_SPLIT = 0.2
 ```
 
 |名前|説明|
@@ -278,7 +278,7 @@ VALUDATION_SPLIT = 0.2
 |MAX_SEQUENCE_LENGTH|記録するシーケンスの最大数 |
 |MAX_NUM_WORDS|記録する単語の最大数|
 |EMBEDDING_DIM|gloveファイルの次元数 |
-|VALUEDATION_SPLIT|訓練データと教師データを分ける比率|
+|VALIDATION_SPLIT |訓練データと教師データを分ける比率|
   
 ※gloveファイルとテキストデータはファイルの容量が100MB以上でgithubに保存できなかったので, 下記を参照されたい.  
 [glove](http://nlp.stanford.edu/projects/glove/)  
@@ -297,7 +297,7 @@ for line in f:
 f.close()
 ```
 
-まず, gloveファイルを開き, ファイル内の文字列一行一行をlineに代入する. split関数は入力された文字を基準に文字列を分解しリストを返すものだが, 何もしてしなければスペースを基準として分割を行う. gloveの中身がわかりにくいであろうから, 試しにvaluesを出力してみる.
+まず, gloveファイルを開き, ファイル内の文字列一行一行をlineに代入する. split関数は入力された文字を基準に文字列を分割する関数で, 何も入力してしなければスペースを基準として分割を行う. gloveの中身がわかりにくいであろうから, 試しにvaluesを出力してみる.
 
 ```python
 print(values)
