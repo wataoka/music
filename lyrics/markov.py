@@ -1,5 +1,12 @@
 import random
 import MeCab
+import pandas as pd
+
+def csv2txt(filename):
+
+    df = pd.read_csv(filename)
+    lyric = df['lyric']
+    lyric.to_csv('test.txt')
 
 def wakati(text):
     t = MeCab.Tagger("-Owakati")
@@ -8,6 +15,7 @@ def wakati(text):
     return result
 
 if __name__ == "__main__":
+    csv2txt('./data/01/#嘲笑ポラロイド.csv')
     filename = "test.txt"
     src = open(filename ,"r").read()
     wordlist = wakati(src)
@@ -28,7 +36,7 @@ if __name__ == "__main__":
     sentence = ""
     w1, w2 = random.choice(list(markov.keys()))
     while count < len(wordlist):
-        tmp = random.choice(marckov[(w1, w2)])
+        tmp = random.choice(markov[(w1, w2)])
         sentence += tmp
         w1, w2 = w2, tmp
         count += 1

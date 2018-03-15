@@ -5,4 +5,4 @@ def csv2txt(csv_file):
     lyric.to_csv(txt_file)
 
 if __name__ == '__main__':
-    target_path = './data'
+    target_path = './data/csv/'
