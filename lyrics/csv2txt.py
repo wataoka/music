@@ -1,17 +1,38 @@
+# coding: utf-8
 import pandas as pd
+import glob
 
+def csv2txt(path, csv_file):
 
-def csv2txt(csv_file):
+    df = pd.read_csv(path + csv_file)
+    lyric = df['lyric']
+    lyric.to_csv('tmp.txt')
+
+    file = open('tmp.txt', 'r')
 
     txt_file = csv_file[:-4] + '.txt'
-    df = pd.read_csv(csv_file)
-    lyric = df['lyric']
-    lyric.to_csv(txt_file)
+    out_file = open('./data/txt/' + txt_file, 'w')
+
+    file.readline()
+    lines = file.readlines()
+
+    for line in lines:
+        line = line.replace('\"', '')
+        out_file.write(line)
+
+    file.close()
+    out_file.close()
+
+
+
+
 
 
 
 if __name__ == '__main__':
 
-    target_path = './data/あなたに逢えてよかった.csv'
-    csv2txt(target_path)
-
+    file_list = glob.glob('./data/csv/*.csv')
+    for filename in file_list:
+        filename = filename[11:]
+        path = './data/csv/'
+        csv2txt(path, filename)
