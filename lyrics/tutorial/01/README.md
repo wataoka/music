@@ -241,7 +241,7 @@ maxlen = 40
 step = 3
 sentences = []
 next_chars = []
-for i in range(0, len(text) maxlen, step):
+for i in range(0, len(text) - maxlen, step):
     sentences.append(text[i: i + maxlen])
     next_chars.append(text[i + maxlen])
 print('nb sequences:', len(sentences))
@@ -322,7 +322,7 @@ print(np.shape(y))
 ```
 200285が大量に作った文章の数  
 57が記号の数で, あとで一文字一文字対応する場所を1に変更する.  
-そして, xに関しては40個の文字列で一セットなので(200284, 4-, 57)となっている.  
+そして, xに関しては40個の文字列で一セットなので(200284, 40, 57)となっている.  
 
 
 #### 対応する場所を1にする
