@@ -15,6 +15,8 @@ import numpy as np
 import random
 import sys
 import io
+import os
+from tqdm import tqdm
 
 
 
@@ -126,7 +128,7 @@ def load_data():
     step = 2
     sentences = []
     next_chars = []
-    for i in range(0, len(text) - maxlen, step):
+    for i in tqdm(range(0, len(text) - maxlen, step)):
         sentences.append(text[i: i + maxlen])
         next_chars.append(text[i + maxlen])
     print('nb sequences:', len(sentences))
@@ -134,20 +136,39 @@ def load_data():
     print('Vectorization...')
     x = np.zeros((len(sentences), maxlen, len(chars)), dtype=np.bool)
     y = np.zeros((len(sentences), len(chars)), dtype=np.bool)
-    for i, sentence in enumerate(sentences):
+    for i, sentence in enumerate(tqdm(sentences)):
         for t, char in enumerate(sentence):
             x[i, t, char_indices[char]] = 1
         y[i, char_indices[next_chars[i]]] = 1
 
-    return (x, y), (maxlen, step), (text, chars, char_indices, indices_char)
+
+    data = {}
+    data['x'] = x
+    data['y'] = y
+    data['maxlen'] = maxlen
+    data['step'] = step
+    data['text'] = step
+    data['char_indices'] = char_indices
+    data['indices_char'] = indices_char
+
+    return data
 
 
 
 if __name__ == "__main__":
 
-    # データの作成
-    (x, y), (maxlen, step), (text, chars, char_indices, indices_char) = load_data()
+    if os.path.exists('./data/data.pickle'):
+        print("file exists!")
+        with open("./data/data.pickle", 'rb') as f:
+            data = pickle.load(f)
+    else:
+        # データの作成
+        print("file don't exists...")
+        data = load_data()
+        with open("./data/data.pickle", 'wb') as f:
+            pickle.dump(data, f)
 
+    quit()
     # LyricsNet生成
     LyricsNet = LyricsNet(maxlen, step, text, chars, char_indices, indices_char)
 
