@@ -27,10 +27,10 @@ class LyricsNet():
     LyricsNet with LSTM
     """
 
-    def __init__(self, data):
+    def __init__(self, data, args):
 
-        self.maxlen = data['maxlen']
-        self.step = data['step']
+        self.maxlen = args.maxlen
+        self.step = args.step
         self.text = data['text']
         self.chars = data['chars']
         self.char_indices = data['char_indices']
@@ -41,6 +41,8 @@ class LyricsNet():
     def createModel(self, input_shape, n_class):
 
         """
+        モデルを生成する関数.
+
         :param input_shape: データの形 ([文章の数, 文章の長さ, 文字の数])
         :param n_class: クラス数 (文字の数)
         :return: LyricsNetモデル (Single LSTM)
@@ -56,7 +58,12 @@ class LyricsNet():
 
     def on_epoch_end(self, epoch, logs):
 
-        # 各エポック終了後に呼び出され, 生成したテキストを標準出力する.
+        """
+        各エポック終了後に呼び出され, 生成したテキストを標準出力する関数.
+
+        :param epoch: 現在のエポック数
+        :param logs: ログ
+        """
 
         print()
         print('----- Generating text after Epoch: %d' % epoch)
@@ -68,6 +75,7 @@ class LyricsNet():
             generated = []
             sentence = self.text[start_index: start_index + self.maxlen]
             generated = sentence
+
             print('----- Generating with seed: "' + ''.join(sentence) + '"')
             sys.stdout.write(''.join(generated))
 
@@ -91,7 +99,13 @@ class LyricsNet():
 
     def sample(self, preds, temperature=1.0):
 
-        # 単語リストを正規化し, 確率的に単語を選択する.
+        """
+        単語リストを正規化し, 確率的に単語を選択する関数.
+
+        :param preds: 確率が格納されたリスト
+        :param temperature: 温度と呼ばれる学習パラメータで, 高ければ選択の確率が平滑化される.
+        :return: 選択した単語のindex
+        """
 
         preds = np.asarray(preds).astype('float64')
         preds = np.log(preds) / temperature
@@ -101,7 +115,16 @@ class LyricsNet():
         return np.argmax(probas)
 
 
+
+
 def wakati(text):
+
+    """
+    分かち書きをする関数.
+
+    :param text: 分かち書きをしたい文章
+    :return: 分かち書きされた単語のリスト
+    """
 
     t = MeCab.Tagger("-Owakati")
     m = t.parse(text)
@@ -109,13 +132,25 @@ def wakati(text):
     return result
 
 
-def load_data():
+def load_data(args):
+
+    """
+    教師データをロードする関数.
+
+    :param args: maxlenとstepなどを格納したargparseオブジェクト
+    :return (x, y): 教師データ
+    :return data: 文章生成に必要なデータ
+    """
+
+    maxlen = args.maxlen
+    step = args.step
+    maxsentence = args.maxsentence
 
     file_list = glob.glob('./data/txt/*.txt')
     text = []
     print("wakati sentense.")
     for i, file in enumerate(tqdm(file_list)):
-        if i%2 == 0:
+        if i%70 == 0:
             src = open(file, 'r').read()
             wordlist = wakati(src)
             for word in wordlist:
@@ -128,13 +163,14 @@ def load_data():
     char_indices = dict((c, i) for i, c in enumerate(tqdm(chars)))
     indices_char = dict((i, c) for i, c in enumerate(tqdm(chars)))
 
-    maxlen = 5
-    step = 2
     sentences = []
     next_chars = []
     for i in tqdm(range(0, len(text) - maxlen, step)):
-        sentences.append(text[i: i + maxlen])
-        next_chars.append(text[i + maxlen])
+        if len(sentences) >= maxsentence:
+            break
+        else:
+            sentences.append(text[i: i + maxlen])
+            next_chars.append(text[i + maxlen])
     print('nb sequences:', len(sentences))
 
     print('Vectorization...')
@@ -147,8 +183,6 @@ def load_data():
 
 
     data = {}
-    data['maxlen'] = maxlen
-    data['step'] = step
     data['text'] = text
     data['chars'] = chars
     data['char_indices'] = char_indices
@@ -159,30 +193,31 @@ def load_data():
 
 
 if __name__ == "__main__":
+    import argparse
 
-    # if os.path.exists('./data/data.pickle'):
-    #     print("file exists!")
-    #     with open("./data/data.pickle", 'rb') as f:
-    #         data = pickle.load(f)
-    # else:
-    #     # データの作成
-    #     print("file don't exists...")
-    #     data = load_data()
-    #     with open("./data/data.pickle", 'wb') as f:
-    #         pickle.dump(data, f)
+    # コマンドライン引数を取得
+    parser = argparse.ArgumentParser(description="lyricsNet")
+    parser.add_argument('--batch_size', default=128, type=int)
+    parser.add_argument('--epochs', default=50, type=int)
+    parser.add_argument('--lr', default=0.01, type=float)
+    parser.add_argument('--maxlen', default=10, type=int)
+    parser.add_argument('--maxsentence', default=10000, type=int)
+    parser.add_argument('--step', default=2, type=int)
+    args = parser.parse_args()
+    print(args)
 
     # データを生成
-    (x, y), data = load_data()
+    (x, y), data = load_data(args)
 
     # LyricsNet生成
-    LyricsNet = LyricsNet(data)
+    LyricsNet = LyricsNet(data, args)
 
     # モデルを定義
     model = LyricsNet.createModel(x.shape[1:], y.shape[1])
-    model.compile(loss='categorical_crossentropy', optimizer=RMSprop(lr=0.01))
+    model.compile(loss='categorical_crossentropy', optimizer=RMSprop(lr=args.lr))
 
     # モデルを実行 (学習と出力)
     model.fit(x, y,
-              batch_size=128,
-              epochs=60,
+              batch_size=args.batch_size,
+              epochs=args.epochs,
               callbacks=[LambdaCallback(on_epoch_end=LyricsNet.on_epoch_end)])
