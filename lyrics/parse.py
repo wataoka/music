@@ -54,12 +54,22 @@ def json2txt():
 
 
 
-
+def json():
+    import json
+    file_list = glob.glob('./data/json/*.json')
+    for file in file_list:
+        f = open(file, 'r')
+        j = json.load(f)
+        f.close
+        for song in j['data']:
+            if song['singer'] == '福山雅治':
+                print(type(song['lyrics']))
+                quit()
 
 
 if __name__ == '__main__':
 
-    json2txt()
+    json()
 
     # file_list = glob.glob('./data/csv/*.csv')
     # for filename in file_list:

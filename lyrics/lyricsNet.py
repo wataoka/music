@@ -30,7 +30,12 @@ class LyricsNet():
     def __init__(self, data, args):
 
         self.maxlen = args.maxlen
+        self.a_mero_len = args.a_mero_len
+        self.b_mero_len = args.b_mero_len
+        self.sabi_len = args.sabi_len
         self.step = args.step
+        self.length = self.a_mero_len + self.b_mero_len + self.sabi_len
+
         self.text = data['text']
         self.chars = data['chars']
         self.char_indices = data['char_indices']
@@ -55,21 +60,21 @@ class LyricsNet():
 
         return model
 
-
-    def on_epoch_end(self, epoch, logs):
+    def generate(self, model):
 
         """
-        各エポック終了後に呼び出され, 生成したテキストを標準出力する関数.
+        歌詞を生成する関数
 
-        :param epoch: 現在のエポック数
-        :param logs: ログ
+        :param model: 学習中もしくは学習済みモデル
         """
 
         print()
-        print('----- Generating text after Epoch: %d' % epoch)
-
         start_index = random.randint(0, len(self.text) - self.maxlen - 1)
-        for diversity in [0.2, 0.5, 1.0, 1.2]:
+        mecab = MeCab.Tagger("-Ochasen")
+
+        for diversity in [1.1]:
+            print()
+            print()
             print('----- diversity:', diversity)
 
             generated = []
@@ -77,24 +82,59 @@ class LyricsNet():
             generated = sentence
 
             print('----- Generating with seed: "' + ''.join(sentence) + '"')
-            sys.stdout.write(''.join(generated))
-
-            for i in range(400):
-                x_pred = np.zeros((1, self.maxlen, len(self.chars)))
-                for t, word in enumerate(sentence):
-                    x_pred[0, t, self.char_indices[word]] = 1.
-
-                # 与えられたsentenceから次の単語を予想
-                preds = model.predict(x_pred, verbose=0)[0]
-                next_index = self.sample(preds, diversity)
-                next_word = self.indices_char[next_index]
-
-                sentence.append(next_word)
-                sentence.pop(0)
-
-                sys.stdout.write(next_word)
-                sys.stdout.flush()
             print()
+
+            for j, x in enumerate([self.a_mero_len, self.b_mero_len, self.sabi_len]):
+
+                cnt = 0
+                flag = True
+                while True:
+
+                    x_pred = np.zeros((1, self.maxlen, len(self.chars)))
+                    for t, word in enumerate(sentence):
+                        x_pred[0, t, self.char_indices[word]] = 1.
+
+                    # 与えられたsentenceから次の単語を予想
+                    preds = model.predict(x_pred, verbose=0)[0]
+                    next_index = self.sample(preds, diversity)
+                    next_word = self.indices_char[next_index]
+
+
+                    sentence.append(next_word)
+                    sentence.pop(0)
+
+                    if flag and ('名詞' in mecab.parse(next_word).split()[3]):
+                        sys.stdout.write(next_word)
+                        flag = False
+                    elif flag and not(('名詞' in mecab.parse(next_word).split()[3])):
+                        continue
+                    else:
+                        sys.stdout.write(next_word)
+
+
+
+                    if (cnt >= 5) and ('助詞' in mecab.parse(next_word).split()[3]):
+                        break
+                    else:
+                        cnt += 1
+
+                print()
+
+            print()
+
+    def on_epoch_end(self, epoch, log):
+
+        """
+        各エポック終了後に呼び出され, 生成したテキストを標準出力する関数.
+
+        :param epoch: 現在のエポック数
+        :param logs: ログ
+        """
+        print()
+        print()
+        print('----- Generating text after Epoch: %d' % epoch)
+        self.generate(model)
+
 
 
     def sample(self, preds, temperature=1.0):
@@ -145,17 +185,27 @@ def load_data(args):
     maxlen = args.maxlen
     step = args.step
     maxsentence = args.maxsentence
+    singer = args.singer
 
-    file_list = glob.glob('./data/txt/*.txt')
+    import json
+    file_list = glob.glob('./data/json/*.json')
     text = []
-    print("wakati sentense.")
-    for i, file in enumerate(tqdm(file_list)):
-        if i%70 == 0:
-            src = open(file, 'r').read()
-            wordlist = wakati(src)
-            for word in wordlist:
-                text.append(word)
+    for file in file_list:
+        f = open(file, 'r')
+        j = json.load(f)
+        f.close()
+        for song in j['data']:
+            if singer == '':
+                wordlist = wakati(song['lyrics'].replace('\n', ''))
+                for word in wordlist:
+                    text.append(word)
+            elif singer == song['singer']:
+                wordlist = wakati(song['lyrics'].replace('\n', ''))
+                for word in wordlist:
+                    text.append(word)
 
+    if text == '':
+        print(singer, 'さんの曲は見つかりませんでした.')
 
     print("sorting text.")
     chars = sorted(list(set(text)))
@@ -194,15 +244,22 @@ def load_data(args):
 
 if __name__ == "__main__":
     import argparse
+    import h5py
 
     # コマンドライン引数を取得
     parser = argparse.ArgumentParser(description="lyricsNet")
     parser.add_argument('--batch_size', default=128, type=int)
     parser.add_argument('--epochs', default=50, type=int)
     parser.add_argument('--lr', default=0.01, type=float)
-    parser.add_argument('--maxlen', default=10, type=int)
+    parser.add_argument('--maxlen', default=5, type=int)
     parser.add_argument('--maxsentence', default=10000, type=int)
-    parser.add_argument('--step', default=2, type=int)
+    parser.add_argument('--step', default=1, type=int)
+    parser.add_argument('--singer', default='', type=str)
+    parser.add_argument('--a_mero_len', default=20, type=int)
+    parser.add_argument('--b_mero_len', default=15, type=int)
+    parser.add_argument('--sabi_len', default=20, type=int)
+    parser.add_argument('--model_path', default='', type=str)
+    parser.add_argument('--aux', default='False', type=str)
     args = parser.parse_args()
     print(args)
 
@@ -212,12 +269,25 @@ if __name__ == "__main__":
     # LyricsNet生成
     LyricsNet = LyricsNet(data, args)
 
-    # モデルを定義
-    model = LyricsNet.createModel(x.shape[1:], y.shape[1])
-    model.compile(loss='categorical_crossentropy', optimizer=RMSprop(lr=args.lr))
+    if os.path.exists(args.model_path):
+        from keras.models import load_model
+        model = load_model('./model/model.h5')
 
-    # モデルを実行 (学習と出力)
-    model.fit(x, y,
-              batch_size=args.batch_size,
-              epochs=args.epochs,
-              callbacks=[LambdaCallback(on_epoch_end=LyricsNet.on_epoch_end)])
+        print()
+        print("learned model exists!")
+
+        # 歌詞生成
+        LyricsNet.generate(model)
+    else:
+        # モデルを定義
+        model = LyricsNet.createModel(x.shape[1:], y.shape[1])
+        model.compile(loss='categorical_crossentropy', optimizer=RMSprop(lr=args.lr))
+
+        print("learned model don't exists...\n")
+
+        # モデルを実行 (学習と出力)
+        model.fit(x, y,
+                    batch_size=args.batch_size,
+                    epochs=args.epochs,
+                    callbacks=[LambdaCallback(on_epoch_end=LyricsNet.on_epoch_end)])
+        model.save('./model/model.h5')
