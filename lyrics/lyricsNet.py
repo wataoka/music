@@ -30,11 +30,8 @@ class LyricsNet():
     def __init__(self, data, args):
 
         self.maxlen = args.maxlen
-        self.a_mero_len = args.a_mero_len
-        self.b_mero_len = args.b_mero_len
-        self.sabi_len = args.sabi_len
         self.step = args.step
-        self.length = self.a_mero_len + self.b_mero_len + self.sabi_len
+        self.lines = args.lines
 
         self.text = data['text']
         self.chars = data['chars']
@@ -72,7 +69,7 @@ class LyricsNet():
         start_index = random.randint(0, len(self.text) - self.maxlen - 1)
         mecab = MeCab.Tagger("-Ochasen")
 
-        for diversity in [1.1]:
+        for diversity in [0.4, 0.7, 1.1]:
             print()
             print()
             print('----- diversity:', diversity)
@@ -84,12 +81,13 @@ class LyricsNet():
             print('----- Generating with seed: "' + ''.join(sentence) + '"')
             print()
 
-            for j, x in enumerate([self.a_mero_len, self.b_mero_len, self.sabi_len]):
+            for i in range(self.lines):
 
                 cnt = 0
                 flag = True
-                while True:
 
+                # 一文の生成
+                while True:
                     x_pred = np.zeros((1, self.maxlen, len(self.chars)))
                     for t, word in enumerate(sentence):
                         x_pred[0, t, self.char_indices[word]] = 1.
@@ -115,6 +113,8 @@ class LyricsNet():
 
                     if (cnt >= 5) and ('助詞' in mecab.parse(next_word).split()[3]):
                         break
+                    elif cnt >= 25:
+                        break
                     else:
                         cnt += 1
 
@@ -130,6 +130,7 @@ class LyricsNet():
         :param epoch: 現在のエポック数
         :param logs: ログ
         """
+
         print()
         print()
         print('----- Generating text after Epoch: %d' % epoch)
@@ -249,17 +250,14 @@ if __name__ == "__main__":
     # コマンドライン引数を取得
     parser = argparse.ArgumentParser(description="lyricsNet")
     parser.add_argument('--batch_size', default=128, type=int)
-    parser.add_argument('--epochs', default=50, type=int)
+    parser.add_argument('--epochs', default=12, type=int)
     parser.add_argument('--lr', default=0.01, type=float)
-    parser.add_argument('--maxlen', default=5, type=int)
+    parser.add_argument('--maxlen', default=8, type=int)
     parser.add_argument('--maxsentence', default=10000, type=int)
-    parser.add_argument('--step', default=1, type=int)
+    parser.add_argument('--lines', default=20, type=int)
+    parser.add_argument('--step', default=2, type=int)
     parser.add_argument('--singer', default='', type=str)
-    parser.add_argument('--a_mero_len', default=20, type=int)
-    parser.add_argument('--b_mero_len', default=15, type=int)
-    parser.add_argument('--sabi_len', default=20, type=int)
     parser.add_argument('--model_path', default='', type=str)
-    parser.add_argument('--aux', default='False', type=str)
     args = parser.parse_args()
     print(args)
 
@@ -271,7 +269,7 @@ if __name__ == "__main__":
 
     if os.path.exists(args.model_path):
         from keras.models import load_model
-        model = load_model('./model/model.h5')
+        model = load_model(args.model_path)
 
         print()
         print("learned model exists!")
@@ -288,6 +286,3 @@ if __name__ == "__main__":
         # モデルを実行 (学習と出力)
         model.fit(x, y,
                     batch_size=args.batch_size,
-                    epochs=args.epochs,
-                    callbacks=[LambdaCallback(on_epoch_end=LyricsNet.on_epoch_end)])
-        model.save('./model/model.h5')
