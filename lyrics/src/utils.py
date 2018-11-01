@@ -35,7 +35,7 @@ def load_data(args):
     singer = args.singer
 
     import json
-    file_list = glob.glob('./data/json/*.json')
+    file_list = glob.glob('./../data/json/*.json')
     text = []
     for file in file_list:
         f = open(file, 'r')
