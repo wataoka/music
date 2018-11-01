@@ -4,16 +4,18 @@ import sys
 import glob
 import random
 import pickle
+
 import numpy as np
 from utils import wakati, load_data
 
 import keras
-from keras.callbacks import LambdaCallback
+from keras.models import load_model
 from keras.models import Sequential
-from keras.layers import Dense, Activation
-from keras.layers import LSTM
+from keras.layers import Dense, LSTM, Activation
 from keras.optimizers import RMSprop
+from keras.callbacks import LambdaCallback
 from keras.utils.data_utils import get_file
+
 
 
 class LyricsNet():
@@ -35,22 +37,6 @@ class LyricsNet():
 
 
 
-    def createModel(self, input_shape, n_class):
-
-        """
-        モデルを生成する関数.
-
-        :param input_shape: データの形 ([文章の数, 文章の長さ, 文字の数])
-        :param n_class: クラス数 (文字の数)
-        :return: LyricsNetモデル (Single LSTM)
-        """
-
-        model = Sequential()
-        model.add(LSTM(128, input_shape=input_shape))
-        model.add(Dense(n_class))
-        model.add(Activation('softmax'))
-
-        return model
 
     def generate(self, model):
 
@@ -138,6 +124,23 @@ class LyricsNet():
 
 
 
+def createModel(self, input_shape, n_class):
+
+    """
+    モデルを生成する関数.
+
+    :param input_shape: データの形 ([文章の数, 文章の長さ, 文字の数])
+    :param n_class: クラス数 (文字の数)
+    :return: LyricsNetモデル (Single LSTM)
+    """
+
+    model = Sequential()
+    model.add(LSTM(128, input_shape=input_shape))
+    model.add(Dense(n_class))
+    model.add(Activation('softmax'))
+
+    return model
+
 
 class Logger(keras.callbacks.Callback):
 
@@ -156,7 +159,6 @@ if __name__ == "__main__":
 
     # コマンドライン引数を取得
     parser = argparse.ArgumentParser(description="lyricsNet")
-    parser.add_argument('--batch_size', default=128, type=int)
     parser.add_argument('--epochs', default=12, type=int)
     parser.add_argument('--lr', default=0.01, type=float)
     parser.add_argument('--maxlen', default=8, type=int)
@@ -175,7 +177,6 @@ if __name__ == "__main__":
     LyricsNet = LyricsNet(data, args)
 
     if os.path.exists(args.model_path):
-        from keras.models import load_model
         model = load_model(args.model_path)
 
         print()
@@ -195,6 +196,6 @@ if __name__ == "__main__":
         # モデルを実行 (学習と出力)
         model.fit(x, y,
                   batch_size=args.batch_size,
-                  epochs=12,
+                  epochs=args.epochs,
                   callbacks=[logger])
         LyricsNet.generate(model)
