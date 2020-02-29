@@ -1,12 +1,8 @@
 import os
-import io
 import glob
 import h5py
 import pickle
 import argparse
-
-from Logger import Logger
-from utils import wakati, load_data
 
 import keras
 from keras.models import load_model
@@ -15,6 +11,10 @@ from keras.layers import Dense, LSTM, Activation
 from keras.optimizers import RMSprop
 from keras.callbacks import LambdaCallback
 from keras.utils.data_utils import get_file
+
+from Logger import Logger
+from utils import wakati, load_data
+
 
 
 

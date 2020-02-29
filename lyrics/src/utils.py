@@ -1,4 +1,5 @@
 import glob
+import json
 import MeCab
 
 import numpy as np
@@ -34,7 +35,6 @@ def load_data(args):
     maxsentence = args.maxsentence
     singer = args.singer
 
-    import json
     file_list = glob.glob('./../data/json/*.json')
     text = []
     for file in file_list:
